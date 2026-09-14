@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>
+      Account &mdash; F1 Merch
+    </title>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+    <link href="styles.css" rel="stylesheet"/>
+  </head>
+  <body class="auth-page">
+    <div class="checker-bar">
+    </div>
+    <main class="auth-shell">
+      <a class="auth-brand" href="index.html">
+        <span class="auth-badge">
+          F1
+        </span>
+        <span>
+          <strong>
+            F1 MERCH
+          </strong>
+          <small>
+            GRID TO STREET
+          </small>
+        </span>
+      </a>
+      <section class="auth-card">
+        <div class="auth-head">
+          <span class="eyebrow">
+            Account
+          </span>
+          <h1 id="authTitle">
+            Sign in
+          </h1>
+          <p id="authSubtitle">
+            Access your F1 Merch account.
+          </p>
+        </div>
+        <div class="auth-toggle" id="customerToggle">
+          <button class="toggle-btn active" data-form="login" type="button">
+            Sign in
+          </button>
+          <button class="toggle-btn" data-form="signup" type="button">
+            Create account
+          </button>
+        </div>
+        <form class="auth-form" id="loginForm">
+          <label>
+            Email
+            <input autocomplete="email" id="loginEmail" placeholder="you@example.com" required="" type="email"/>
+          </label>
+          <label>
+            Password
+            <input autocomplete="current-password" id="loginPassword" placeholder="Your password" required="" type="password"/>
+          </label>
+          <button class="btn btn-primary auth-submit" type="submit">
+            Sign in
+          </button>
+        </form>
+        <form class="auth-form" hidden="" id="signupFormAuth">
+          <label>
+            Full name
+            <input autocomplete="name" id="signupName" placeholder="Your name" required="" type="text"/>
+          </label>
+          <label>
+            Email
+            <input autocomplete="email" id="signupEmailAuth" placeholder="you@example.com" required="" type="email"/>
+          </label>
+          <label>
+            Password
+            <input autocomplete="new-password" id="signupPassword" minlength="8" placeholder="At least 8 characters" required="" type="password"/>
+          </label>
+          <label>
+            Confirm password
+            <input autocomplete="new-password" id="signupConfirm" minlength="8" placeholder="Repeat your password" required="" type="password"/>
+          </label>
+          <button class="btn btn-primary auth-submit" type="submit">
+            Create account
+          </button>
+        </form>
+        <p aria-live="polite" class="auth-message" id="authMessage">
+        </p>
+        <a class="auth-back" href="index.html">
+          &larr; Back to storefront
+        </a>
+        <a class="auth-admin-link" href="admin-login.html">
+          Administrator login &rarr;
+        </a>
+      </section>
+    </main>
+    <script src="auth-client.js?v=19">
+    </script>
+    <script src="login.js?v=19">
+    </script>
+  </body>
+</html>

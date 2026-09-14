@@ -1,0 +1,13 @@
+# Local/runtime files
+.env
+*.log
+.DS_Store
+Thumbs.db
+
+# User-uploaded media (keep empty folders with .gitkeep if needed)
+uploads/profiles/*
+uploads/products/*
+
+# IDE/local configuration
+.vscode/
+.idea/

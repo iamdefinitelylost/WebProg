@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width,initial-scale=1" name="viewport"/>
+    <title>
+      F1 Merch Server Status
+    </title>
+    <link href="styles.css" rel="stylesheet"/>
+  </head>
+  <body class="auth-page">
+    <main class="auth-shell">
+      <div class="auth-card">
+        <span class="eyebrow">
+          Diagnostics
+        </span>
+        <h1>
+          SERVER STATUS
+        </h1>
+        <p class="auth-subtitle">
+          Check whether PHP, MySQL, the users table, and the demo admin account are reachable.
+        </p>
+        <pre id="status" style="white-space:pre-wrap;background:#111318;border:1px solid #2a2e38;border-radius:12px;padding:16px;color:#dfe3ea;font-size:12px;line-height:1.6">Checking&hellip;</pre>
+        <a href="admin-login.html">
+          &larr; Admin login
+        </a>
+      </div>
+    </main>
+    <script>
+      fetch('api/health.php?_='+Date.now(),{cache:'no-store'}).then(async r=>{const t=await r.text();try{document.getElementById('status').textContent=JSON.stringify(JSON.parse(t),null,2)}catch(e){document.getElementById('status').textContent='HTTP '+r.status+'\\n'+t}}).catch(e=>document.getElementById('status').textContent=e.message);
+    </script>
+  </body>
+</html>
