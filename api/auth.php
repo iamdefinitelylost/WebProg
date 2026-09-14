@@ -29,20 +29,20 @@ function json_response(array $data, int $status = 200): void {
 }
 
 set_exception_handler(function (Throwable $e): void {
+    error_log('[F1 MERCH auth.php] ' . $e->getMessage());
     json_response([
         'success' => false,
-        'error' => 'Authentication server error.',
-        'debug' => $e->getMessage(),
+        'error' => 'Authentication server error. Please try again.',
     ], 500);
 });
 
 register_shutdown_function(function (): void {
     $e = error_get_last();
     if ($e && in_array($e['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+        error_log('[F1 MERCH auth.php] ' . $e['message']);
         json_response([
             'success' => false,
-            'error' => 'Authentication server error.',
-            'debug' => $e['message'],
+            'error' => 'Authentication server error. Please try again.',
         ], 500);
     }
 });
@@ -303,7 +303,19 @@ try {
             if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
                 json_response(['success' => false, 'error' => 'Method not allowed.'], 405);
             }
-            $stmt = $pdo->query("SELECT u.id,u.name,u.email,u.role,u.banned_at,u.avatar_path,u.created_at,COUNT(o.id) order_count,COALESCE(SUM(CASE WHEN o.status<>'cancelled' THEN o.total ELSE 0 END),0) order_total FROM users u LEFT JOIN orders o ON o.user_id=u.id GROUP BY u.id,u.name,u.email,u.role,u.banned_at,u.avatar_path,u.created_at ORDER BY u.created_at DESC");
+            $stmt = $pdo->query(
+                "SELECT u.id, u.name, u.email, u.role, u.banned_at, u.avatar_path,
+                        u.created_at, COUNT(o.id) AS order_count,
+                        COALESCE(
+                            SUM(CASE WHEN o.status <> 'cancelled' THEN o.total ELSE 0 END),
+                            0
+                        ) AS order_total
+                 FROM users u
+                 LEFT JOIN orders o ON o.user_id = u.id
+                 GROUP BY u.id, u.name, u.email, u.role, u.banned_at,
+                          u.avatar_path, u.created_at
+                 ORDER BY u.created_at DESC"
+            );
             $users = $stmt->fetchAll();
             foreach ($users as &$u) {
                 $u['id'] = (int)$u['id'];
@@ -351,6 +363,9 @@ try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_SESSION['user']) || ($_SESSION['user']['role'] ?? '') !== 'customer') {
                 json_response(['success' => false, 'error' => 'Customer login required.'], 401);
             }
+
+            require_csrf();
+
             $id = (int)$_SESSION['user']['id'];
             $name = trim((string)($_POST['name'] ?? ''));
             $bio = trim((string)($_POST['bio'] ?? ''));
@@ -358,35 +373,96 @@ try {
             $nameLength = function_exists('mb_strlen') ? mb_strlen($name) : strlen($name);
             $bioLength = function_exists('mb_strlen') ? mb_strlen($bio) : strlen($bio);
             $teamLength = function_exists('mb_strlen') ? mb_strlen($team) : strlen($team);
-            if ($nameLength < 2) json_response(['success'=>false,'error'=>'Display name must be at least 2 characters.'],422);
-            if ($bioLength > 240 || $teamLength > 80) json_response(['success'=>false,'error'=>'Profile text is too long.'],422);
+            if ($nameLength < 2) {
+                json_response([
+                    'success' => false,
+                    'error' => 'Display name must be at least 2 characters.',
+                ], 422);
+            }
+            if ($bioLength > 240 || $teamLength > 80) {
+                json_response([
+                    'success' => false,
+                    'error' => 'Profile text is too long.',
+                ], 422);
+            }
             $avatar = null;
             if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
-                if ($_FILES['avatar']['error'] !== UPLOAD_ERR_OK) json_response(['success'=>false,'error'=>'Unable to upload profile photo.'],422);
-                if ($_FILES['avatar']['size'] > 5 * 1024 * 1024) json_response(['success'=>false,'error'=>'Profile photo must be 5 MB or smaller.'],422);
+                if ($_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
+                    json_response([
+                        'success' => false,
+                        'error' => 'Unable to upload profile photo.',
+                    ], 422);
+                }
+                if ($_FILES['avatar']['size'] > 5 * 1024 * 1024) {
+                    json_response([
+                        'success' => false,
+                        'error' => 'Profile photo must be 5 MB or smaller.',
+                    ], 422);
+                }
                 $finfo = new finfo(FILEINFO_MIME_TYPE);
                 $mime = $finfo->file($_FILES['avatar']['tmp_name']);
                 $allowed = ['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp'];
-                if (!isset($allowed[$mime])) json_response(['success'=>false,'error'=>'Profile photo must be JPG, PNG, or WebP.'],422);
+                if (!isset($allowed[$mime])) {
+                    json_response([
+                        'success' => false,
+                        'error' => 'Profile photo must be JPG, PNG, or WebP.',
+                    ], 422);
+                }
                 $dir = __DIR__ . '/../uploads/profiles';
-                if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) json_response(['success'=>false,'error'=>'Unable to create profile upload folder.'],500);
+                if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
+                    json_response([
+                        'success' => false,
+                        'error' => 'Unable to create profile upload folder.',
+                    ], 500);
+                }
                 $file = 'profile_' . $id . '_' . bin2hex(random_bytes(5)) . '.' . $allowed[$mime];
-                if (!move_uploaded_file($_FILES['avatar']['tmp_name'], $dir . '/' . $file)) json_response(['success'=>false,'error'=>'Unable to save profile photo.'],500);
+                if (!move_uploaded_file($_FILES['avatar']['tmp_name'], $dir . '/' . $file)) {
+                    json_response([
+                        'success' => false,
+                        'error' => 'Unable to save profile photo.',
+                    ], 500);
+                }
                 $avatar = 'uploads/profiles/' . $file;
             }
             try {
                 if ($avatar !== null) {
-                    $stmt = $pdo->prepare('UPDATE users SET name=:name,bio=:bio,favorite_team=:team,avatar_path=:avatar WHERE id=:id');
-                    $stmt->execute([':name'=>$name,':bio'=>$bio,':team'=>$team,':avatar'=>$avatar,':id'=>$id]);
+                    $stmt = $pdo->prepare(
+                        'UPDATE users
+                         SET name = :name, bio = :bio, favorite_team = :team, avatar_path = :avatar
+                         WHERE id = :id'
+                    );
+                    $stmt->execute([
+                        ':name' => $name,
+                        ':bio' => $bio,
+                        ':team' => $team,
+                        ':avatar' => $avatar,
+                        ':id' => $id,
+                    ]);
                 } else {
-                    $stmt = $pdo->prepare('UPDATE users SET name=:name,bio=:bio,favorite_team=:team WHERE id=:id');
-                    $stmt->execute([':name'=>$name,':bio'=>$bio,':team'=>$team,':id'=>$id]);
+                    $stmt = $pdo->prepare(
+                        'UPDATE users
+                         SET name = :name, bio = :bio, favorite_team = :team
+                         WHERE id = :id'
+                    );
+                    $stmt->execute([
+                        ':name' => $name,
+                        ':bio' => $bio,
+                        ':team' => $team,
+                        ':id' => $id,
+                    ]);
                 }
-                $stmt = $pdo->prepare('SELECT id,name,email,role,banned_at,avatar_path,bio,favorite_team FROM users WHERE id=:id LIMIT 1');
-                $stmt->execute([':id'=>$id]);
+                $stmt = $pdo->prepare(
+                    'SELECT id, name, email, role, banned_at, avatar_path, bio, favorite_team
+                     FROM users WHERE id = :id LIMIT 1'
+                );
+                $stmt->execute([':id' => $id]);
                 $u = $stmt->fetch();
             } catch (Throwable $e) {
-                json_response(['success'=>false,'error'=>'Profile fields are missing from the users table. Run the updated schema.sql.','debug'=>$e->getMessage()],500);
+                error_log('[F1 MERCH auth.php] ' . $e->getMessage());
+                json_response([
+                    'success' => false,
+                    'error' => 'Profile fields are missing from the users table. Run the updated schema.sql.',
+                ], 500);
             }
             $_SESSION['user'] = user_public($u);
             json_response(['success'=>true,'user'=>$_SESSION['user']]);
@@ -396,9 +472,9 @@ try {
             json_response(['success' => false, 'error' => 'Unknown authentication action.'], 400);
     }
 } catch (Throwable $e) {
+    error_log('[F1 MERCH auth.php] ' . $e->getMessage());
     json_response([
         'success' => false,
-        'error' => 'Authentication server error.',
-        'debug' => $e->getMessage(),
+        'error' => 'Authentication server error. Please try again.',
     ], 500);
 }

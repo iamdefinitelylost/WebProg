@@ -1,6 +1,83 @@
-const $=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c])),money=v=>'₱'+Number(v||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});let products=[],cat='all',query='';const grid=$('#releaseGrid');
-function cart(){try{return JSON.parse(localStorage.getItem('f1_merch_cart')||'[]')}catch{return[]}}function count(){const e=$('#cartCount');if(e)e.textContent=cart().reduce((s,x)=>s+Number(x.qty||0),0)}
-function renderCard(p,i){return `<article class="card drop-card"><a class="card-media" href="product.html?id=${p.id}">${p.limited_edition?'<span class="badge">LIMITED</span>':''}${p.featured?'<span class="featured">FEATURED</span>':''}${p.image?`<img class="product-image" src="${esc(p.image)}" alt="${esc(p.name)}">`:`<svg class="icon" viewBox="0 0 200 200"><rect width="200" height="200" rx="36" fill="#14161C"/><circle cx="168" cy="32" r="7" fill="#E2231A"/><text x="100" y="128" text-anchor="middle" font-family="Space Grotesk" font-weight="700" font-size="110" fill="#fff">F1</text></svg>`}<span class="grid-pos">${String(i+1).padStart(2,'0')}</span></a><div class="card-body"><div class="product-meta"><span>${esc(p.team||p.category)}</span><span>${esc(p.category)}</span></div><div class="name">${esc(p.name)}</div><div class="desc">${esc(p.desc)}</div><div class="card-foot"><span class="product-price">${money(p.price)}</span><span class="product-stock ${p.stock<5?'low':''}">${p.stock?`${p.stock} left`:'Sold out'}</span><a class="view" href="product.html?id=${p.id}">Explore</a><button class="add" data-id="${p.id}" ${p.stock<1?'disabled':''}>+</button></div></div></article>`}
-function render(){const q=query.toLowerCase();let a=products.filter(p=>{const categoryMatch=cat==='all'||(cat==='limited'?(p.limited_edition||p.category==='archive'):p.category===cat);const team=new URLSearchParams(location.search).get('team');const teamMatch=!team||(p.team||'').toLowerCase()===team.toLowerCase();return categoryMatch&&teamMatch&&(!q||`${p.name} ${p.team||''} ${p.desc} ${p.category}`.toLowerCase().includes(q))});grid.innerHTML=a.length?a.map(renderCard).join(''):'<div class="admin-empty">No releases found.</div>';document.querySelectorAll('.add').forEach(b=>b.onclick=()=>{const p=products.find(x=>Number(x.id)===Number(b.dataset.id));if(!p||!p.stock)return;const c=cart(),size=p.sizes?.[0]||'One Size',x=c.find(i=>Number(i.id)===Number(p.id)&&i.size===size);if(x)x.qty=Math.min(x.qty+1,p.stock);else c.push({id:p.id,name:p.name,price:Number(p.price),qty:1,image:p.image||'',size});localStorage.setItem('f1_merch_cart',JSON.stringify(c));count();alert(`${p.name} added to cart.`)});}
-document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{cat=b.dataset.cat;document.querySelectorAll('[data-cat]').forEach(x=>x.classList.toggle('active',x===b));render()});$('#search').oninput=e=>{query=e.target.value;render()};$('#menuBtn')?.addEventListener('click',()=>{const open=$('#navLinks').classList.toggle('open');$('#menuBtn').setAttribute('aria-expanded',open)});
-let target=new Date();target.setDate(target.getDate()+((8-target.getDay())%7||7));target.setHours(20,0,0,0);function tick(){let s=Math.max(0,Math.floor((target-new Date())/1000));$('#days').textContent=String(Math.floor(s/86400)).padStart(2,'0');$('#hours').textContent=String(Math.floor(s%86400/3600)).padStart(2,'0');$('#minutes').textContent=String(Math.floor(s%3600/60)).padStart(2,'0');$('#seconds').textContent=String(s%60).padStart(2,'0')}setInterval(tick,1000);tick();count();(async()=>{try{products=await getProducts();render()}catch(e){grid.innerHTML=`<div class="admin-empty">${esc(e.message)}</div>`}})();
+const $ = s => document.querySelector(s), esc = v => String(v ?? '').replace(/[&<>'"]/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;'
+}[c])), money = v => '₱' + Number(v || 0).toLocaleString('en-PH', {
+    minimumFractionDigits: 2, maximumFractionDigits: 2
+});
+let products = [], cat = 'all', query = '';
+const grid = $('#releaseGrid');
+function cart() {
+    try {
+        return JSON.parse(localStorage.getItem('f1_merch_cart') || '[]');
+    }
+    catch {
+        return [];
+    }
+}
+function count() {
+    const e = $('#cartCount');
+    if (e)
+        e.textContent = cart().reduce((s, x) => s + Number(x.qty || 0), 0);
+}
+function renderCard(p, i) {
+    return `<article class="card drop-card"><a class="card-media" href="product.html?id=${p.id}">${p.limited_edition ? '<span class="badge">LIMITED</span>' : ''}${p.featured ? '<span class="featured">FEATURED</span>' : ''}${p.image ? `<img class="product-image" src="${esc(p.image)}" alt="${esc(p.name)}">` : `<svg class="icon" viewBox="0 0 200 200"><rect width="200" height="200" rx="36" fill="#14161C"/><circle cx="168" cy="32" r="7" fill="#E2231A"/><text x="100" y="128" text-anchor="middle" font-family="Space Grotesk" font-weight="700" font-size="110" fill="#fff">F1</text></svg>`}<span class="grid-pos">${String(i + 1).padStart(2, '0')}</span></a><div class="card-body"><div class="product-meta"><span>${esc(p.team || p.category)}</span><span>${esc(p.category)}</span></div><div class="name">${esc(p.name)}</div><div class="desc">${esc(p.desc)}</div><div class="card-foot"><span class="product-price">${money(p.price)}</span><span class="product-stock ${p.stock < 5 ? 'low' : ''}">${p.stock ? `${p.stock} left` : 'Sold out'}</span><a class="view" href="product.html?id=${p.id}">Explore</a><button class="add" data-id="${p.id}" ${p.stock < 1 ? 'disabled' : ''}>+</button></div></div></article>`;
+}
+function render() {
+    const q = query.toLowerCase();
+    let a = products.filter(p => {
+        const categoryMatch = cat === 'all' || (cat === 'limited' ? (p.limited_edition || p.category === 'archive') : p.category === cat);
+        const team = new URLSearchParams(location.search).get('team');
+        const teamMatch = !team || (p.team || '').toLowerCase() === team.toLowerCase();
+        return categoryMatch && teamMatch && (!q || `${p.name} ${p.team || ''} ${p.desc} ${p.category}`.toLowerCase().includes(q));
+    });
+    grid.innerHTML = a.length ? a.map(renderCard).join('') : '<div class="admin-empty">No releases found.</div>';
+    document.querySelectorAll('.add').forEach(b => b.onclick = () => {
+        const p = products.find(x => Number(x.id) === Number(b.dataset.id));
+        if (!p || !p.stock)
+            return;
+        const c = cart(), size = p.sizes?.[0] || 'One Size', x = c.find(i => Number(i.id) === Number(p.id) && i.size === size);
+        if (x)
+            x.qty = Math.min(x.qty + 1, p.stock);
+        else
+            c.push({
+                id: p.id, name: p.name, price: Number(p.price), qty: 1, image: p.image || '', size
+            });
+        localStorage.setItem('f1_merch_cart', JSON.stringify(c));
+        count();
+        alert(`${p.name} added to cart.`);
+    });
+}
+document.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => {
+    cat = b.dataset.cat;
+    document.querySelectorAll('[data-cat]').forEach(x => x.classList.toggle('active', x === b));
+    render();
+});
+$('#search').oninput = e => {
+    query = e.target.value;
+    render();
+};
+$('#menuBtn')?.addEventListener('click', () => {
+    const open = $('#navLinks').classList.toggle('open');
+    $('#menuBtn').setAttribute('aria-expanded', open);
+});
+let target = new Date();
+target.setDate(target.getDate() + ((8 - target.getDay()) % 7 || 7));
+target.setHours(20, 0, 0, 0);
+function tick() {
+    let s = Math.max(0, Math.floor((target - new Date()) / 1000));
+    $('#days').textContent = String(Math.floor(s / 86400)).padStart(2, '0');
+    $('#hours').textContent = String(Math.floor(s % 86400 / 3600)).padStart(2, '0');
+    $('#minutes').textContent = String(Math.floor(s % 3600 / 60)).padStart(2, '0');
+    $('#seconds').textContent = String(s % 60).padStart(2, '0');
+}
+setInterval(tick, 1000);
+tick();
+count();
+(async () => {
+    try {
+        products = await getProducts();
+        render();
+    }
+    catch (e) {
+        grid.innerHTML = `<div class="admin-empty">${esc(e.message)}</div>`;
+    }
+})();

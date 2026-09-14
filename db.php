@@ -1,11 +1,14 @@
 <?php
-// F1 MERCH - database connection + automatic compatibility migration.
-// XAMPP defaults: host=localhost, database=f1_merch, user=root, blank password.
 
-$DB_HOST = 'localhost';
-$DB_NAME = 'f1_merch';
-$DB_USER = 'root';
-$DB_PASS = '';
+declare(strict_types=1);
+
+// F1 MERCH - PDO connection and backward-compatible database migration.
+// XAMPP defaults are kept for local development; environment variables can
+// override them without committing production credentials to GitHub.
+$DB_HOST = getenv('F1_DB_HOST') ?: 'localhost';
+$DB_NAME = getenv('F1_DB_NAME') ?: 'f1_merch';
+$DB_USER = getenv('F1_DB_USER') ?: 'root';
+$DB_PASS = getenv('F1_DB_PASS') ?: '';
 
 try {
     $pdo = new PDO(
@@ -27,14 +30,25 @@ try {
     // columns. Add only missing columns so login, banning, profiles and
     // product photos work without requiring the user to delete/re-import
     // their existing database.
-    function f1_column_exists(PDO $pdo, string $table, string $column): bool {
-        $stmt = $pdo->prepare("SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = :table_name AND COLUMN_NAME = :column_name LIMIT 1");
+    function f1_column_exists(PDO $pdo, string $table, string $column): bool
+    {
+        $stmt = $pdo->prepare(
+            'SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+             WHERE TABLE_SCHEMA = DATABASE()
+             AND TABLE_NAME = :table_name
+             AND COLUMN_NAME = :column_name LIMIT 1'
+        );
         $stmt->execute([':table_name' => $table, ':column_name' => $column]);
         return (bool)$stmt->fetch();
     }
 
-    function f1_table_exists(PDO $pdo, string $table): bool {
-        $stmt = $pdo->prepare("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = :table_name LIMIT 1");
+    function f1_table_exists(PDO $pdo, string $table): bool
+    {
+        $stmt = $pdo->prepare(
+            'SELECT 1 FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_SCHEMA = DATABASE()
+             AND TABLE_NAME = :table_name LIMIT 1'
+        );
         $stmt->execute([':table_name' => $table]);
         return (bool)$stmt->fetch();
     }

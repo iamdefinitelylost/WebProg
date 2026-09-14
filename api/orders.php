@@ -206,8 +206,42 @@ try {
                 }
             }
 
-            $shipping = (string)$data['shipping_method'];
-            $payment = (string)$data['payment_method'];
+            $fullName = trim((string)$data['full_name']);
+            $phone = trim((string)$data['phone']);
+            $address = trim((string)$data['address']);
+            $city = trim((string)$data['city']);
+            $province = trim((string)$data['province']);
+            $postalCode = trim((string)$data['postal_code']);
+            $shipping = trim((string)$data['shipping_method']);
+            $payment = trim((string)$data['payment_method']);
+
+            $fieldLengths = [
+                'full name' => [$fullName, 2, 100],
+                'phone' => [$phone, 7, 30],
+                'address' => [$address, 5, 180],
+                'city' => [$city, 2, 80],
+                'province' => [$province, 2, 80],
+                'postal code' => [$postalCode, 4, 10],
+            ];
+
+            foreach ($fieldLengths as $label => [$value, $minimum, $maximum]) {
+                $length = function_exists('mb_strlen') ? mb_strlen($value) : strlen($value);
+
+                if ($length < $minimum || $length > $maximum) {
+                    order_response([
+                        'success' => false,
+                        'error' => ucfirst($label) . " must be between {$minimum} and {$maximum} characters.",
+                    ], 422);
+                }
+            }
+
+            if (!preg_match('/^[0-9+()\-\s]{7,30}$/', $phone)) {
+                order_response(['success' => false, 'error' => 'Enter a valid phone number.'], 422);
+            }
+
+            if (!preg_match('/^[A-Za-z0-9\-\s]{4,10}$/', $postalCode)) {
+                order_response(['success' => false, 'error' => 'Enter a valid postal code.'], 422);
+            }
 
             if (!isset(SHIPPING_PRICES[$shipping]) || !in_array($payment, ['cod', 'gcash'], true)) {
                 order_response(['success' => false, 'error' => 'Invalid checkout selection.'], 422);
@@ -285,12 +319,12 @@ try {
                     ':order_number' => $orderNumber,
                     ':summary' => $summary,
                     ':total' => $total,
-                    ':name' => trim((string)$data['full_name']),
-                    ':phone' => trim((string)$data['phone']),
-                    ':address' => trim((string)$data['address']),
-                    ':city' => trim((string)$data['city']),
-                    ':province' => trim((string)$data['province']),
-                    ':postal' => trim((string)$data['postal_code']),
+                    ':name' => $fullName,
+                    ':phone' => $phone,
+                    ':address' => $address,
+                    ':city' => $city,
+                    ':province' => $province,
+                    ':postal' => $postalCode,
                     ':shipping' => $shipping,
                     ':payment' => $payment,
                 ]);
