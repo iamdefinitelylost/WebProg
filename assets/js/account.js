@@ -53,7 +53,7 @@ async function orders() {
         credentials: 'same-origin'
     }), d = await r.json();
     $('#orderCount').textContent = `${d.orders.length} order${d.orders.length === 1 ? '' : 's'}`;
-    $('#ordersList').innerHTML = d.orders.length ? d.orders.map(o => `<article class="order-card"><div class="order-top"><div><strong>${esc(o.order_number)}</strong><small>${new Date(o.created_at).toLocaleString()}</small></div><b>${money(o.total)}</b></div><p>${esc(o.item_summary)}</p>${timeline(o.status)}<details><summary>Order details</summary><p><b>Ship to:</b> ${esc(o.address)}, ${esc(o.city)}, ${esc(o.province)} ${esc(o.postal_code)}</p><p><b>Phone:</b> ${esc(o.phone)} · <b>Payment:</b> ${esc(o.payment_method === 'gcash' ? 'GCash / E-wallet' : 'Cash on Delivery')}</p></details></article>`).join('') : '<div class="empty-state">No orders yet. <a href="index.html#shop">Start shopping →</a></div>';
+    $('#ordersList').innerHTML = d.orders.length ? d.orders.map(o => `<article class="order-card"><div class="order-top"><div><strong>${esc(o.order_number)}</strong><small>${new Date(o.created_at).toLocaleString()}</small></div><b>${money(o.total)}</b></div><p>${esc(o.item_summary)}</p>${timeline(o.status)}<details><summary>Order details</summary><p><b>Ship to:</b> ${esc(o.address)}, ${esc(o.city)}, ${esc(o.province)} ${esc(o.postal_code)}</p><p><b>Phone:</b> ${esc(o.phone)} · <b>Payment:</b> ${esc(o.payment_method === 'gcash' ? 'GCash / E-wallet' : 'Cash on Delivery')}</p></details></article>`).join('') : '<div class="empty-state">No orders yet. <a href="index.php#shop">Start shopping →</a></div>';
 }
 async function wishlist() {
     const r = await getCurrentUser();
@@ -62,12 +62,12 @@ async function wishlist() {
     const wr = await fetch('api/wishlist.php?action=list'), wd = await wr.json();
     const set = new Set(wd.items);
     const ps = products.filter(p => set.has(p.id));
-    $('#wishlistGrid').innerHTML = ps.length ? ps.map(p => `<article class="product-card"><a class="product-media" href="product.html?id=${p.id}">${p.image ? `<img class="product-img" src="${esc(p.image)}">` : '<div class="product-img placeholder">F1</div>'}</a><div class="product-info"><small>${esc(p.team || p.category)}</small><h3>${esc(p.name)}</h3><strong>${money(p.price)}</strong><a class="btn btn-primary btn-small" href="product.html?id=${p.id}">View product</a></div></article>`).join('') : '<div class="empty-state">Your wishlist is empty.</div>';
+    $('#wishlistGrid').innerHTML = ps.length ? ps.map(p => `<article class="product-card"><a class="product-media" href="product.php?id=${p.id}">${p.image ? `<img class="product-img" src="${esc(p.image)}">` : '<div class="product-img placeholder">F1</div>'}</a><div class="product-info"><small>${esc(p.team || p.category)}</small><h3>${esc(p.name)}</h3><strong>${money(p.price)}</strong><a class="btn btn-primary btn-small" href="product.php?id=${p.id}">View product</a></div></article>`).join('') : '<div class="empty-state">Your wishlist is empty.</div>';
 }
 (async () => {
     const r = await getCurrentUser();
     if (!r.authenticated || r.user.role !== 'customer') {
-        location.href = 'login.html';
+        location.href = 'login.php';
         return;
     }
     $('#name').value = r.user.name;
@@ -118,6 +118,6 @@ async function wishlist() {
     if (logoutBtn)
         logoutBtn.onclick = async () => {
             await logoutUser();
-            location.href = 'index.html';
+            location.href = 'index.php';
         };
 })();

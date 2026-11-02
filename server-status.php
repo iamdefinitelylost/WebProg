@@ -6,7 +6,8 @@
     <title>
       F1 Merch Server Status
     </title>
-    <link href="styles.css" rel="stylesheet"/>
+    <link href="assets/css/styles.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   </head>
   <body class="auth-page">
     <main class="auth-shell">
@@ -21,7 +22,7 @@
           Check whether PHP, MySQL, the users table, and the demo admin account are reachable.
         </p>
         <pre id="status" style="white-space:pre-wrap;background:#111318;border:1px solid #2a2e38;border-radius:12px;padding:16px;color:#dfe3ea;font-size:12px;line-height:1.6">Checking&hellip;</pre>
-        <a href="admin-login.html">
+        <a href="admin-login.php">
           &larr; Admin login
         </a>
       </div>

@@ -9,7 +9,7 @@
             return;
         link.classList.remove('authenticated');
         link.removeAttribute('data-authenticated');
-        link.href = 'login.html';
+        link.href = 'login.php';
         link.textContent = 'Sign in';
         link.removeAttribute('title');
         link.removeAttribute('aria-label');
@@ -29,7 +29,7 @@
             return;
         const name = String(user.name || '').trim();
         const avatar = avatarUrl(user.avatar_path);
-        link.href = 'account.html';
+        link.href = 'account.php';
         link.classList.add('authenticated');
         link.dataset.authenticated = 'true';
         link.title = name ? `Account: ${name}` : 'My account';

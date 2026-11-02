@@ -21,10 +21,10 @@ function updateNavActive() {
     const links = document.querySelectorAll('.nav-links a');
     if (!links.length)
         return;
-    const path = location.pathname.split('/').pop() || 'index.html';
+    const path = location.pathname.split('/').pop() || 'index.php';
     const hash = location.hash;
     let active = '';
-    if (path === 'index.html' || path === '') {
+    if (path === 'index.php' || path === '') {
         if (hash === '#teams')
             active = 'teams';
         else if (hash === '#story')
@@ -39,7 +39,7 @@ function updateNavActive() {
             a.classList.add('active');
         else if (active === 'story' && href.endsWith('#story'))
             a.classList.add('active');
-        else if (active === 'shop' && (href === '#lineup' || href.endsWith('index.html#lineup')))
+        else if (active === 'shop' && (href === '#lineup' || href.endsWith('index.php#lineup')))
             a.classList.add('active');
     });
 }
@@ -90,7 +90,7 @@ async function toggleWish(btn) {
     try {
         const r = await getCurrentUser();
         if (!r.authenticated) {
-            location.href = 'login.html?next=' + encodeURIComponent(location.href);
+            location.href = 'login.php?next=' + encodeURIComponent(location.href);
             return;
         }
         const res = await csrfFetch('api/wishlist.php?action=toggle', {
@@ -108,7 +108,7 @@ async function toggleWish(btn) {
     }
 }
 function card(p, i) {
-    return `<article class="card" data-id="${p.id}"><a href="product.html?id=${p.id}" class="card-media">${p.limited_edition ? '<span class="badge">LIMITED</span>' : ''}${p.featured ? '<span class="featured">FEATURED</span>' : ''}${p.image ? `<img class="product-image" src="${esc(p.image)}" alt="${esc(p.name)}">` : `<svg class="icon" viewBox="0 0 200 200"><rect width="200" height="200" rx="36" fill="#14161C"/><circle cx="168" cy="32" r="7" fill="#E2231A"/><text x="100" y="128" text-anchor="middle" font-family="Space Grotesk" font-weight="700" font-size="110" fill="#fff">F1</text></svg>`}<span class="grid-pos">${String(i + 1).padStart(2, '0')}</span></a><div class="card-body"><div class="product-meta"><span>${esc(p.team || p.category)}</span><span>${esc(p.category)}</span></div><div class="name">${esc(p.name)}</div><div class="desc">${esc(p.desc)}</div><div class="card-foot"><span class="product-price">${money(p.price)}</span><span class="product-stock ${p.stock < 5 ? 'low' : ''}">${p.stock ? `${p.stock} left` : 'Sold out'}</span><a class="view" href="product.html?id=${p.id}">View</a><button class="wish" data-id="${p.id}" aria-label="Wishlist">♡</button><button class="add" data-id="${p.id}" ${Number(p.stock) < 1 ? 'disabled' : ''}>+</button></div></div></article>`;
+    return `<article class="card" data-id="${p.id}"><a href="product.php?id=${p.id}" class="card-media">${p.limited_edition ? '<span class="badge">LIMITED</span>' : ''}${p.featured ? '<span class="featured">FEATURED</span>' : ''}${p.image ? `<img class="product-image" src="${esc(p.image)}" alt="${esc(p.name)}">` : `<svg class="icon" viewBox="0 0 200 200"><rect width="200" height="200" rx="36" fill="#14161C"/><circle cx="168" cy="32" r="7" fill="#E2231A"/><text x="100" y="128" text-anchor="middle" font-family="Space Grotesk" font-weight="700" font-size="110" fill="#fff">F1</text></svg>`}<span class="grid-pos">${String(i + 1).padStart(2, '0')}</span></a><div class="card-body"><div class="product-meta"><span>${esc(p.team || p.category)}</span><span>${esc(p.category)}</span></div><div class="name">${esc(p.name)}</div><div class="desc">${esc(p.desc)}</div><div class="card-foot"><span class="product-price">${money(p.price)}</span><span class="product-stock ${p.stock < 5 ? 'low' : ''}">${p.stock ? `${p.stock} left` : 'Sold out'}</span><a class="view" href="product.php?id=${p.id}">View</a><button class="wish" data-id="${p.id}" aria-label="Wishlist">♡</button><button class="add" data-id="${p.id}" ${Number(p.stock) < 1 ? 'disabled' : ''}>+</button></div></div></article>`;
 }
 function render() {
     const q = search.toLowerCase();
@@ -120,9 +120,6 @@ function render() {
     document.querySelectorAll('.lineup-filter').forEach(b => b.classList.toggle('active', b.dataset.category === category));
     document.querySelectorAll('.add').forEach(b => b.onclick = () => addCart(products.find(p => Number(p.id) === Number(b.dataset.id))));
     document.querySelectorAll('.wish').forEach(b => b.onclick = () => toggleWish(b));
-}
-function renderTeams() {
-    $('#teamGrid').innerHTML = teams.map(t => `<a class="team-tile" href="drops.html?team=${encodeURIComponent(t)}"><span>${esc(t)}</span><small>SHOP COLLECTION →</small></a>`).join('');
 }
 $('#searchInput')?.addEventListener('input', e => {
     search = e.target.value.trim();
@@ -178,7 +175,6 @@ $('#modalOverlay')?.addEventListener('click', e => {
     try {
         products = await getProducts();
         render();
-        renderTeams();
     }
     catch (e) {
         $('#lineupGrid').innerHTML = `<div class="admin-empty">Could not load products. ${esc(e.message)}</div>`;

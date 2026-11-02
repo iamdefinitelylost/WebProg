@@ -27,7 +27,7 @@ function save(c) {
 }
 function render() {
     const sizes = product.sizes?.length ? product.sizes : ['One Size'];
-    $('#productRoot').innerHTML = `<div class="product-detail"><div class="detail-media">${product.image ? `<img src="${esc(product.image)}" alt="${esc(product.name)}">` : '<div class="detail-placeholder">F1</div>'}</div><div class="detail-copy"><span class="eyebrow">${esc(product.team || product.category)} ${product.limited_edition ? '· LIMITED' : ''}</span><h1>${esc(product.name)}</h1><div class="detail-price">${money(product.price)}</div><p>${esc(product.desc)}</p><div class="detail-meta"><span>${product.stock ? 'IN STOCK' : 'SOLD OUT'}</span><span>${product.stock < 5 && product.stock ? 'ONLY ' + product.stock + ' LEFT' : ''}</span></div><label>Size<select id="sizeSelect">${sizes.map(s => `<option>${esc(s)}</option>`).join('')}</select></label><div class="quantity"><button id="minus">−</button><input id="qty" value="1" min="1" max="${Math.max(product.stock, 1)}" type="number"><button id="plus">+</button></div><div class="detail-actions"><button id="addBtn" class="btn btn-primary" ${product.stock < 1 ? 'disabled' : ''}>Add to cart</button><button id="wishBtn" class="btn btn-ghost">♡ Wishlist</button></div><a class="back-link" href="index.html#shop">← Back to collection</a></div></div><div class="related"><h2>You may also like</h2><div id="relatedGrid" class="product-grid compact"></div></div>`;
+    $('#productRoot').innerHTML = `<div class="product-detail"><div class="detail-media">${product.image ? `<img src="${esc(product.image)}" alt="${esc(product.name)}">` : '<div class="detail-placeholder">F1</div>'}</div><div class="detail-copy"><span class="eyebrow">${esc(product.team || product.category)} ${product.limited_edition ? '· LIMITED' : ''}</span><h1>${esc(product.name)}</h1><div class="detail-price">${money(product.price)}</div><p>${esc(product.desc)}</p><div class="detail-meta"><span>${product.stock ? 'IN STOCK' : 'SOLD OUT'}</span><span>${product.stock < 5 && product.stock ? 'ONLY ' + product.stock + ' LEFT' : ''}</span></div><label>Size<select id="sizeSelect">${sizes.map(s => `<option>${esc(s)}</option>`).join('')}</select></label><div class="quantity"><button id="minus">−</button><input id="qty" value="1" min="1" max="${Math.max(product.stock, 1)}" type="number"><button id="plus">+</button></div><div class="detail-actions"><button id="addBtn" class="btn btn-primary" ${product.stock < 1 ? 'disabled' : ''}>Add to cart</button><button id="wishBtn" class="btn btn-ghost">♡ Wishlist</button></div><a class="back-link" href="index.php#shop">← Back to collection</a></div></div><div class="related"><h2>You may also like</h2><div id="relatedGrid" class="product-grid compact"></div></div>`;
     let q = 1;
     $('#minus').onclick = () => {
         q = Math.max(1, q - 1);
@@ -46,12 +46,12 @@ function render() {
                 id: product.id, name: product.name, price: product.price, qty: q, size, image: product.image || ''
             });
         save(c);
-        location.href = 'cart.html';
+        location.href = 'cart.php';
     };
     $('#wishBtn').onclick = async () => {
         const r = await getCurrentUser();
         if (!r.authenticated) {
-            location.href = 'login.html?next=' + encodeURIComponent(location.href);
+            location.href = 'login.php?next=' + encodeURIComponent(location.href);
             return;
         }
         const res = await csrfFetch('api/wishlist.php?action=toggle', {

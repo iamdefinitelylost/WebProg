@@ -8,13 +8,14 @@
     </title>
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
-    <link href="styles.css" rel="stylesheet"/>
+    <link href="assets/css/styles.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   </head>
   <body class="auth-page">
     <div class="checker-bar">
     </div>
     <main class="auth-shell">
-      <a class="auth-brand" href="index.html">
+      <a class="auth-brand" href="index.php">
         <span class="auth-badge">
           F1
         </span>
@@ -83,17 +84,17 @@
         </form>
         <p aria-live="polite" class="auth-message" id="authMessage">
         </p>
-        <a class="auth-back" href="index.html">
+        <a class="auth-back" href="index.php">
           &larr; Back to storefront
         </a>
-        <a class="auth-admin-link" href="admin-login.html">
+        <a class="auth-admin-link" href="admin-login.php">
           Administrator login &rarr;
         </a>
       </section>
     </main>
-    <script src="auth-client.js?v=19">
+    <script src="assets/js/auth-client.js?v=19">
     </script>
-    <script src="login.js?v=19">
+    <script src="assets/js/login.js?v=19">
     </script>
   </body>
 </html>

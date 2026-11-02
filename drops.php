@@ -8,12 +8,13 @@
     </title>
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
-    <link href="styles.css" rel="stylesheet"/>
+    <link href="assets/css/styles.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   </head>
   <body>
     <header>
       <nav class="wrap subnav">
-        <a class="brand" href="index.html">
+        <a class="brand" href="index.php">
           <svg class="brand-badge" viewbox="0 0 240 240">
             <rect fill="#14161C" height="240" rx="26" width="240">
             </rect>
@@ -39,24 +40,24 @@
           ☰
         </button>
         <div class="nav-links" id="navLinks">
-          <a href="index.html#lineup">
+          <a href="index.php#lineup">
             Shop
           </a>
-          <a class="active" href="drops.html">
+          <a class="active" href="drops.php">
             Drops
           </a>
-          <a href="index.html#teams">
+          <a href="index.php#teams">
             Teams
           </a>
-          <a href="index.html#story">
+          <a href="index.php#story">
             Story
           </a>
         </div>
         <div class="nav-actions">
-          <a href="login.html" id="accountLink">
+          <a href="login.php" id="accountLink">
             Sign in
           </a>
-          <a class="nav-cart-link" href="cart.html">
+          <a class="nav-cart-link" href="cart.php">
             Cart &middot;
             <span id="cartCount">
               0
@@ -166,18 +167,18 @@
         <p>
           Sign in to save products, build a wishlist, and track your orders.
         </p>
-        <a class="btn btn-primary" href="login.html">
+        <a class="btn btn-primary" href="login.php">
           Create account
         </a>
       </div>
     </section>
-    <script src="auth-client.js?v=27">
+    <script src="assets/js/auth-client.js?v=27">
     </script>
-    <script src="auth-nav.js?v=1">
+    <script src="assets/js/auth-nav.js?v=1">
     </script>
-    <script src="products-data.js?v=27">
+    <script src="assets/js/products-data.js?v=27">
     </script>
-    <script src="drops.js?v=19">
+    <script src="assets/js/drops.js?v=19">
     </script>
   </body>
 </html>

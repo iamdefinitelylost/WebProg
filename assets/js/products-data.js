@@ -50,21 +50,28 @@ async function addProduct(product) {
 }
 async function updateProduct(id, updates) {
     const options = {
-        method: 'PUT',
+        method: 'POST',
         credentials: 'same-origin'
     };
+
     if (updates instanceof FormData) {
         options.body = updates;
-    }
-    else {
+    } else {
         options.headers = {
             'Content-Type': 'application/json'
         };
         options.body = JSON.stringify(updates);
     }
-    const res = await csrfFetch(`${PRODUCTS_ENDPOINT}?id=${encodeURIComponent(id)}`, options);
-    if (!res.ok)
+
+    const res = await csrfFetch(
+        `${PRODUCTS_ENDPOINT}?action=update&id=${encodeURIComponent(id)}`,
+        options
+    );
+
+    if (!res.ok) {
         throw new Error(await parseErrorResponse(res));
+    }
+
     return res.json();
 }
 async function deleteProduct(id) {

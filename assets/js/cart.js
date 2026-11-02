@@ -18,7 +18,7 @@ function save(c) {
 function render() {
     const c = load();
     $('#cartCount').textContent = c.reduce((s, x) => s + Number(x.qty), 0);
-    $('#cartItems').innerHTML = c.length ? c.map((x, i) => `<article class="cart-item"><div class="cart-thumb">${x.image ? `<img src="${esc(x.image)}">` : 'F1'}</div><div class="cart-item-info"><small>${esc(x.size || 'One Size')}</small><h3>${esc(x.name)}</h3><strong>${money(x.price)}</strong><div class="qty"><button data-act="minus" data-i="${i}">−</button><span>${x.qty}</span><button data-act="plus" data-i="${i}">+</button><button class="remove" data-act="remove" data-i="${i}">Remove</button></div></div><strong>${money(x.price * x.qty)}</strong></article>`).join('') : '<div class="empty-state"><h3>Your cart is empty.</h3><a href="index.html#shop">Browse the collection →</a></div>';
+    $('#cartItems').innerHTML = c.length ? c.map((x, i) => `<article class="cart-item"><div class="cart-thumb">${x.image ? `<img src="${esc(x.image)}">` : 'F1'}</div><div class="cart-item-info"><small>${esc(x.size || 'One Size')}</small><h3>${esc(x.name)}</h3><strong>${money(x.price)}</strong><div class="qty"><button data-act="minus" data-i="${i}">−</button><span>${x.qty}</span><button data-act="plus" data-i="${i}">+</button><button class="remove" data-act="remove" data-i="${i}">Remove</button></div></div><strong>${money(x.price * x.qty)}</strong></article>`).join('') : '<div class="empty-state"><h3>Your cart is empty.</h3><a href="index.php#shop">Browse the collection →</a></div>';
     const t = c.reduce((s, x) => s + x.price * x.qty, 0);
     $('#subtotal').textContent = money(t);
     $('#total').textContent = money(t);
@@ -42,10 +42,10 @@ $('#checkoutBtn').onclick = async () => {
         return;
     const r = await getCurrentUser();
     if (!r.authenticated) {
-        location.href = 'login.html?next=checkout.html';
+        location.href = 'login.php?next=checkout.php';
         return;
     }
-    location.href = 'checkout.html';
+    location.href = 'checkout.php';
 };
 (async () => {
     try {

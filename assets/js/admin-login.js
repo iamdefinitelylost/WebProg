@@ -17,7 +17,7 @@ form.addEventListener('submit', async (e) => {
         if (result.authorized_role !== 'admin' || !result.user || result.user.role !== 'admin') {
             throw new Error('The signed-in account is not an administrator.');
         }
-        location.replace('admin.html');
+        location.replace('admin.php');
     }
     catch (err) {
         showMessage(err.message || 'Unable to authenticate administrator.', 'error');

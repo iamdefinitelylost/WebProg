@@ -1,6 +1,6 @@
 <header>
   <nav class="wrap subnav">
-    <a class="brand" href="index.html">
+    <a class="brand" href="index.php">
       <svg aria-label="F1 Merch" class="brand-badge" viewbox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
         <rect fill="#14161C" height="240" rx="26" width="240" x="0" y="0">
         </rect>
@@ -42,24 +42,24 @@
       ☰
     </button>
     <div class="nav-links" id="navLinks">
-      <a href="index.html#lineup">
+      <a href="index.php#lineup">
         Shop
       </a>
-      <a href="drops.html">
+      <a href="drops.php">
         Drops
       </a>
-      <a href="index.html#teams">
+      <a href="index.php#teams">
         Teams
       </a>
-      <a href="index.html#story">
+      <a href="index.php#story">
         Story
       </a>
     </div>
     <div class="nav-actions">
-      <a href="login.html" id="accountLink">
+      <a href="login.php" id="accountLink">
         Sign in
       </a>
-      <a class="nav-cart-link" href="cart.html">
+      <a class="nav-cart-link" href="cart.php">
         Cart &middot;
         <span id="cartCount">
           0

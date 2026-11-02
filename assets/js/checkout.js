@@ -34,7 +34,7 @@ function totals() {
 }
 function render() {
     if (!cart.length) {
-        location.href = 'cart.html';
+        location.href = 'cart.php';
         return;
     }
     $('#checkoutItems').innerHTML = cart.map(x => `<div class="checkout-item"><span><b>${esc(x.name)}</b><small>${esc(x.size || 'One Size')} · Qty ${x.qty}</small></span><strong>${money(x.price * x.qty)}</strong></div>`).join('');
@@ -43,7 +43,7 @@ function render() {
 async function init() {
     const r = await getCurrentUser();
     if (!r.authenticated || r.user.role !== 'customer') {
-        location.href = 'login.html?next=checkout.html';
+        location.href = 'login.php?next=checkout.php';
         return;
     }
     $('#fullName').value = r.user.name || '';
@@ -89,7 +89,7 @@ $('#checkoutForm').onsubmit = async (e) => {
         if (!r.ok)
             throw Error(d.error || 'Could not place order.');
         localStorage.removeItem(KEY);
-        location.href = 'success.html?order=' + encodeURIComponent(d.order.order_number);
+        location.href = 'success.php?order=' + encodeURIComponent(d.order.order_number);
     }
     catch (err) {
         $('#checkoutMessage').textContent = err.message;

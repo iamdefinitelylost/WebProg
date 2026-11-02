@@ -316,6 +316,77 @@ try {
         get_products($pdo);
     }
 
+    if ($method === 'POST' && $action === 'update') {
+        if ($id < 1) {
+            product_response([
+                'success' => false,
+                'error' => 'Missing product id.',
+            ], 400);
+        }
+
+        $stmt = $pdo->prepare(
+            'SELECT image_path FROM products WHERE id = :id'
+        );
+        $stmt->execute([':id' => $id]);
+        $existing = $stmt->fetch();
+
+        if (!$existing) {
+            product_response([
+                'success' => false,
+                'error' => 'Product not found.',
+            ], 404);
+        }
+
+        // POST + multipart/form-data is used here because PHP reliably
+        // populates $_POST and $_FILES for uploaded product images.
+        $body = request_data();
+        $data = validate_product($body);
+        $image = $existing['image_path'];
+
+        if (!empty($body['remove_image'])) {
+            delete_product_image($existing['image_path']);
+            $image = null;
+        }
+
+        $newImage = upload_product_image($_FILES['image'] ?? null);
+
+        if ($newImage !== null) {
+            delete_product_image($existing['image_path']);
+            $image = $newImage;
+        }
+
+        $stmt = $pdo->prepare(
+            'UPDATE products
+             SET name = :name,
+                 description = :description,
+                 price = :price,
+                 category = :category,
+                 image_path = :image,
+                 stock = :stock,
+                 team = :team,
+                 sizes = :sizes,
+                 limited_edition = :limited,
+                 featured = :featured
+             WHERE id = :id'
+        );
+
+        $stmt->execute([
+            ':name' => $data['name'],
+            ':description' => $data['desc'],
+            ':price' => $data['price'],
+            ':category' => $data['category'],
+            ':image' => $image,
+            ':stock' => $data['stock'],
+            ':team' => $data['team'],
+            ':sizes' => $data['sizes'],
+            ':limited' => $data['limited'],
+            ':featured' => $data['featured'],
+            ':id' => $id,
+        ]);
+
+        get_products($pdo, $id);
+    }
+
     if ($method === 'POST') {
         $data = validate_product(request_data());
         $image = upload_product_image($_FILES['image'] ?? null);

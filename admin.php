@@ -6,12 +6,12 @@
     <title>
       Admin Command &mdash; F1 Merch
     </title>
-    <link href="styles.css?v=20" rel="stylesheet"/>
+    <link href="assets/css/styles.css?v=20" rel="stylesheet"/>
   </head>
   <body class="admin-page">
     <header>
       <nav class="wrap subnav">
-        <a class="brand" href="index.html">
+        <a class="brand" href="index.php">
           <svg class="brand-badge" viewbox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
             <rect fill="#14161C" height="240" rx="26" width="240">
             </rect>
@@ -34,7 +34,7 @@
           </span>
         </a>
         <div class="nav-links" style="display:flex">
-          <a href="index.html">
+          <a href="index.php">
             Storefront
           </a>
         </div>
@@ -313,11 +313,11 @@
         </div>
       </section>
     </main>
-    <script src="auth-client.js">
+    <script src="assets/js/auth-client.js">
     </script>
-    <script src="products-data.js">
+    <script src="assets/js/products-data.js">
     </script>
-    <script src="admin.js?v=27">
+    <script src="assets/js/admin.js?v=27">
     </script>
   </body>
 </html>

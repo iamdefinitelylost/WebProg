@@ -255,12 +255,12 @@ $('#refreshReviews').onclick = loadReviews;
 [['exportOrders', 'orders'], ['exportCustomers', 'customers'], ['exportProducts', 'products'], ['exportReviews', 'reviews']].forEach(([id, type]) => document.getElementById(id)?.addEventListener('click', () => exportData(type)));
 $('#adminLogout').onclick = async () => {
     await logoutUser();
-    location.href = 'admin-login.html';
+    location.href = 'admin-login.php';
 };
 (async () => {
     const r = await getCurrentUser();
     if (!r.authenticated || r.authorized_role !== 'admin') {
-        location.href = 'admin-login.html';
+        location.href = 'admin-login.php';
         return;
     }
     $('#adminName').textContent = r.user.name;

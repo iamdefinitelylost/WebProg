@@ -8,12 +8,13 @@
     </title>
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
-    <link href="styles.css" rel="stylesheet"/>
+    <link href="assets/css/styles.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   </head>
   <body>
     <header>
       <nav class="wrap subnav">
-        <a class="brand" href="index.html">
+        <a class="brand" href="index.php">
           <svg class="brand-badge" viewbox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
             <rect fill="#14161C" height="240" rx="26" width="240">
             </rect>
@@ -58,7 +59,7 @@
           <a class="active" href="#lineup">
             Shop
           </a>
-          <a href="drops.html">
+          <a href="drops.php">
             Drops
           </a>
           <a href="#teams">
@@ -69,10 +70,10 @@
           </a>
         </div>
         <div class="nav-actions">
-          <a href="login.html" id="accountLink">
+          <a href="login.php" id="accountLink">
             Sign in
           </a>
-          <a class="nav-cart-link" href="cart.html">
+          <a class="nav-cart-link" href="cart.php">
             Cart &middot;
             <span id="cartCount">
               0
@@ -164,7 +165,7 @@
               Loading this weekend's lineup&hellip;
             </p>
           </div>
-          <a class="text-link" href="drops.html">
+          <a class="text-link" href="drops.php">
             See all drops &rarr;
           </a>
         </div>
@@ -255,7 +256,13 @@
             </p>
           </div>
         </div>
-        <div class="team-rail" id="teamGrid">
+        <div class="react-team-tools">
+          <label class="sr-only" for="reactTeamSearch">Search teams</label>
+          <input id="reactTeamSearch" type="search" placeholder="Search a team..." autocomplete="off" />
+          <span id="reactTeamCount" aria-live="polite">Loading teams...</span>
+        </div>
+        <div class="team-rail" id="teamGrid" aria-live="polite">
+          <p class="react-team-loading">Loading teams...</p>
         </div>
       </div>
     </section>
@@ -364,10 +371,10 @@
             <a href="#story">
               Mission
             </a>
-            <a href="drops.html">
+            <a href="drops.php">
               Drops
             </a>
-            <a href="account.html">
+            <a href="account.php">
               Account
             </a>
           </div>
@@ -390,7 +397,7 @@
           <span>
             &copy; 2026 F1 Merch. All rights reserved.
           </span>
-          <a class="admin-link" href="admin-login.html">
+          <a class="admin-link" href="admin-login.php">
             Admin login
           </a>
         </div>
@@ -407,13 +414,17 @@
         </div>
       </div>
     </div>
-    <script src="auth-client.js?v=27">
+    <script src="assets/js/auth-client.js?v=27">
     </script>
-    <script src="auth-nav.js?v=1">
+    <script src="assets/js/auth-nav.js?v=1">
     </script>
-    <script src="products-data.js?v=27">
+    <script src="assets/js/products-data.js?v=27">
     </script>
-    <script src="script.js?v=19">
+    <script src="assets/js/script.js?v=20">
     </script>
+    <!-- React powers the searchable team collection section. -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="assets/js/react-teams.js?v=1"></script>
   </body>
 </html>

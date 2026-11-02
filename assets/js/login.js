@@ -39,7 +39,7 @@ loginForm.addEventListener('submit', async (e) => {
         if (result.authorized_role !== 'customer' || !result.user || result.user.role !== 'customer') {
             throw new Error('This account is not a customer account.');
         }
-        location.replace('index.html');
+        location.replace('index.php');
     }
     catch (err) {
         message(err.message || 'Unable to sign in.', 'error');
@@ -64,7 +64,7 @@ signupForm.addEventListener('submit', async (e) => {
         if (!result || result.success !== true) {
             throw new Error(result?.error || 'Could not create account.');
         }
-        location.replace('index.html');
+        location.replace('index.php');
     }
     catch (err) {
         message(err.message || 'Unable to create account.', 'error');
